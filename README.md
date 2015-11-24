@@ -2,3 +2,6 @@
 
 ### Purpose ###
 To contribute to the front-end of project Urban Flow by creating the sidebar for the application.
+
+### Advisors ###
+Aiman Soliman & Kiumars Soltani & Jeff Terstriep

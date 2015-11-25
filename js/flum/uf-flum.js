@@ -19,21 +19,56 @@ var dateStore = Ext.create('Ext.data.Store',{
                 ]
 });
 
-Ext.define('CG.view.FlumapperPanel', {
-	extend : 'Ext.panel.Panel',
-	xtype : 'cgx1_flumapperpanel',
-	bodyPadding : '5 10',
-	collapseMode : 'header',
-	items : [ 
-	{
-		xtype : 'fieldset',
-		title : 'General Setting',
-		name : 'mmflowsetting',
-		columns : 3,
-		hideMode: 'visibility',
-		items : [
-        		{
-	        		xtype: 'combobox',
+// Create a grid panel
+var cityStore = Ext.create('Ext.data.Store',{
+                fields:['Id','Name'],
+                data:[
+                {Id:'Chicago',Name:'Chicago'},
+                {Id:'NYC',Name:'New York City'},
+                {Id:'LA',Name:'Los Angeles'},
+                {Id:'Houston',Name:'Houston'}
+                ]
+});
+
+var cityGrid = Ext.create('Ext.grid.Panel', {
+        title: 'Cities',
+        store: cityStore,
+        columns: [
+            { header: 'City', dataIndex: 'city'//, 
+                //hidden: true 
+            }
+    ],
+        height: 160,
+        width: 102,
+        renderTo: Ext.getBody()
+});
+
+var cityForm = Ext.create('Ext.form.Panel', {
+    title: 'Upload a File',
+    width: 280,
+    bodyPadding: 10,
+    frame: true,
+    renderTo: Ext.getBody(),    
+    items: [{
+        xtype: 'filefield',
+    name: 'file',
+    fieldLabel: 'File',
+    labelWidth: 50,
+    msgTarget: 'side',
+    allowBlank: false,
+    anchor: '100%',
+    buttonText: 'Select File...'
+    }],
+
+    buttons: [{
+        text: 'Upload',
+    handler: function() {
+        var form = this.up('form').getForm();
+    }
+    }]
+});
+
+var simpleCombo = Ext.create('Ext.form.field.ComboBox', {
 	                	margin: '30 10 0 0',
 	                	fieldLabel: 'Date',
 	                	store: dateStore,
@@ -43,47 +78,39 @@ Ext.define('CG.view.FlumapperPanel', {
 	               		editable: false,
 	               		forceSelection: true,
 	                	value: '201407'
-        		},
-			{
-					xtype : 'label',
-					name : 'mmsliderlabeltitle',
-					text : 'Top-20% Flows Percentile'
-			},
-			{
-					xtype : 'slider',
-                    name : 'mmslider',
-                    width : 250,
-                    useTips : true,
-                    margin : '0 0 0 5',
-                    maxValue : 100,
-                    value : 20
-			},
-			{
-					xtype: 'label',
-					name: 'minfiltertitle',
-					text: 'Min Number of Movements'
-			},
-			{
-					xtype: 'numberfield',
-					name: 'minfiltervalue'
-			},
-			{
-					xtype: 'label',
-					name: 'maxfiltertitle',
-					text: 'Max Number of Movements'
-			},	
-			{
-					xtype: 'numberfield',
-					name: 'maxfiltervalue'
-			},
-			{
-					xtype : 'button',
-					width : 150,
-					margin : '10 0 0 0',
-					text : 'Apply',
-			}
-		]
-	}]
+        });
+
+
+Ext.define('CG.view.FlumapperPanel', {
+	extend : 'Ext.panel.Panel',
+	xtype : 'cgx1_flumapperpanel',
+//	bodyPadding : '5 10',
+	collapseMode : 'header',
+	items : [ 
+	        {
+                xtype : 'tabpanel',
+                width:  300,
+                height: 300,
+                activeTab: 0,
+                items:  [
+                        {
+                            title: 'Select',
+                            bodyPadding: 10,
+                            items: cityGrid
+                        },
+                        {
+                            title: 'Upload',
+                            bodyPadding: 10,
+                            items: cityForm
+                        },
+                        {
+                            title: 'Options',
+                            bodyPadding: 10,
+                            items: simpleCombo
+                        }
+                        ]
+            }
+            ]
 });
 
 var emptystore = Ext.create('Ext.data.JsonStore', {

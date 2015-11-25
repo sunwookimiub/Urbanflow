@@ -3,23 +3,11 @@
 // * Information Laboratory (CIGI), University of Illinois at   *
 // * Urbana-Champaign, All Rights Reserved.                     *
 // **************************************************************
-// @author Yizhao Gao <ygao29@illinois.edu> Kiumars Soltani <soltani2@illinois.edu>
+// @author Yizhao Gao <ygao29@illinois.edu> Kiumars Soltani <soltani2@illinois.edu> Sunwoo Kim <kim392@illinois.edu>
 
 Ext.namespace('CG.flum');
 
-var dateStore = Ext.create('Ext.data.Store',{
-                fields:['Id','Name'],
-                data:[
-                {Id:'201407',Name:'2014-07'},
-                {Id:'201408',Name:'2014-08'},
-                {Id:'201409',Name:'2014-09'},
-                {Id:'201410',Name:'2014-10'},
-                {Id:'201411',Name:'2014-11'},
-                {Id:'201412',Name:'2014-12'}
-                ]
-});
-
-// Create a grid panel
+// Sample data store for the grid panel
 var cityStore = Ext.create('Ext.data.Store',{
                 fields:['Id','Name'],
                 data:[
@@ -30,11 +18,12 @@ var cityStore = Ext.create('Ext.data.Store',{
                 ]
 });
 
+// Grid panel for selecting the city
 var cityGrid = Ext.create('Ext.grid.Panel', {
         title: 'Cities',
         store: cityStore,
         columns: [
-            { header: 'City', dataIndex: 'city'//, 
+            { header: 'City', dataIndex: 'Id'//, 
                 //hidden: true 
             }
     ],
@@ -43,9 +32,10 @@ var cityGrid = Ext.create('Ext.grid.Panel', {
         renderTo: Ext.getBody()
 });
 
+// Form panel for users to upload their shapefiles
 var cityForm = Ext.create('Ext.form.Panel', {
     title: 'Upload a File',
-    width: 280,
+    width: 270,
     bodyPadding: 10,
     frame: true,
     renderTo: Ext.getBody(),    
@@ -68,49 +58,99 @@ var cityForm = Ext.create('Ext.form.Panel', {
     }]
 });
 
-var simpleCombo = Ext.create('Ext.form.field.ComboBox', {
-	                	margin: '30 10 0 0',
-	                	fieldLabel: 'Date',
-	                	store: dateStore,
-	                	displayField: 'Name',
-	                	valueField: 'Id',
-	               		queryMode: 'local',
-	               		editable: false,
-	               		forceSelection: true,
-	                	value: '201407'
-        });
-
+// Fieldset component where users can choose various options
+var cityOption = 
+{
+    xtype: 'fieldset',
+    items: [
+    {
+        // Option: Start Date of the analysis period (date: day of year)
+        xtype: 'datefield',
+        width : 200,
+        margin : '10 0 0 0',
+        fieldLabel: 'Start Date',
+        value: new Date()
+    },
+    {
+        // Option: End Date of the analysis period (date: day of year)
+        xtype: 'datefield',
+        width : 200,
+        margin : '10 0 0 0',
+        fieldLabel: 'End Date',
+        value: new Date()
+    },
+    {
+        // Option: Minimum distance between two consecutive tweets (numeric in meters) 
+        xtype: 'label',
+        name: 'mindisttitle',
+        text: 'Min distance between two consecutive tweets (m)'
+    },
+    {
+        xtype: 'numberfield',
+        name: 'mindistvalue'
+    },
+    {
+        // Option: Minimum time between two consecutive tweets (numeric in minutes) 
+        xtype: 'label',
+        name: 'mintimetitle',
+        text: 'Min time between two consecutive tweets (min)'
+    },
+    {
+        xtype: 'numberfield',
+        name: 'mintimevalue'
+    },
+    {
+        // Option: Minimum speed between two consecutive tweets (numeric in m/s) 
+        xtype: 'label',
+        name: 'minspeedtitle',
+        text: 'Min speed between two consecutive tweets (m/s)'
+    },
+    {
+        xtype: 'numberfield',
+        name: 'minspeedvalue'
+    }
+    ]
+}
 
 Ext.define('CG.view.FlumapperPanel', {
 	extend : 'Ext.panel.Panel',
 	xtype : 'cgx1_flumapperpanel',
-//	bodyPadding : '5 10',
+	bodyPadding : '5 10',
 	collapseMode : 'header',
 	items : [ 
 	        {
-                xtype : 'tabpanel',
+                xtype : 'tabpanel', // Create a tab panel
                 width:  300,
                 height: 300,
                 activeTab: 0,
                 items:  [
                         {
+                            // The grid panel to select the city
                             title: 'Select',
                             bodyPadding: 10,
                             items: cityGrid
                         },
                         {
+                            // The form panel to upload a shapefile
                             title: 'Upload',
                             bodyPadding: 10,
                             items: cityForm
                         },
                         {
+                            // The fieldset component for options
                             title: 'Options',
                             bodyPadding: 10,
-                            items: simpleCombo
+                            items: cityOption
                         }
                         ]
             }
-            ]
+],
+    buttons : [
+            {
+                text: 'Next',
+                
+            }
+        ]
 });
 
 var emptystore = Ext.create('Ext.data.JsonStore', {

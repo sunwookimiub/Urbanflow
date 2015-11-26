@@ -20,11 +20,9 @@ var cityStore = Ext.create('Ext.data.Store',{
 
 // Grid panel for selecting the city
 var cityGrid = Ext.create('Ext.grid.Panel', {
-        title: 'Cities',
         store: cityStore,
         columns: [
-            { header: 'City', dataIndex: 'Id'//, 
-                //hidden: true 
+            { header: 'City', dataIndex: 'Name' 
             }
     ],
         height: 160,
@@ -151,12 +149,68 @@ Ext.define('CG.view.CityPanel', {
                 listeners: {
                     click: function(btn) {
                         Ext.getCmp('city_panel').collapse();
-                        this.setText('I was clicked!');
                     }
                 }
             }
         ]
 });
+
+// Sample spatial clustering algorithm store for the grid panel
+var visitorStore = Ext.create('Ext.data.Store',{
+                fields:['Id','Name'],
+                data:[
+                {Id:'db',Name:'DBSCAN'},
+                {Id:'seq',Name:'SeqScan'},
+                {Id:'gm',Name:'Gaussian Mixture'}
+                ]
+});
+
+// Grid panel for selecting the algorithm
+var visitorGrid = Ext.create('Ext.grid.Panel', {
+        store: visitorStore,
+        columns: [
+            { header: 'Model', dataIndex: 'Name' 
+            }
+    ],
+        height: 160,
+        width: 102,
+        renderTo: Ext.getBody(),
+        listeners: {
+            cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
+                if(rowIndex===0){
+                    Ext.getCmp('visitortab').setActiveTab('paramtab');
+                }
+            }
+        }
+});
+
+// Fieldset component where users can choose the parameters
+var visitorParam = 
+{
+    xtype: 'fieldset',
+    items: [
+    {
+        // Option: Minimum time between two consecutive tweets (numeric in minutes) 
+        xtype: 'label',
+        name: 'mintweettitle',
+        text: 'Min number of tweets'
+    },
+    {
+        xtype: 'numberfield',
+        name: 'mintweetvalue'
+    },
+    {
+        // Option: Minimum speed between two consecutive tweets (numeric in m/s) 
+        xtype: 'label',
+        name: 'searchradiustitle',
+        text: 'Search window radius (m)'
+    },
+    {
+        xtype: 'numberfield',
+        name: 'searchradiusvalue'
+    }
+    ]
+}
 
 // Identify Frequent Visitors Tab Panel (id: visitor_panel)
 Ext.define('CG.view.VisitorPanel', {
@@ -165,15 +219,45 @@ Ext.define('CG.view.VisitorPanel', {
 	bodyPadding : '5 10',
 	collapseMode : 'header',
 	items : [ 
-{
-
-}
-        ]
+            {
+                xtype : 'tabpanel', // Create a tab panel
+                id : 'visitortab',
+                width:  300,
+                height: 300,
+                activeTab: 0,
+                items:  [
+                        {
+                            // The grid panel to select the algorithm
+                            title: 'Model',
+                            bodyPadding: 10,
+                            items: visitorGrid
+                        },
+                        {
+                            // Fieldset component to select parameters
+                            title: 'Parameters',
+                            id : 'paramtab',
+                            bodyPadding: 10,
+                            items: [
+                                    visitorParam,
+                                    {
+                                        xtype: 'button',
+                                        text: 'Next',
+                                        listeners: {
+                                            click: function(btn) {
+                                                Ext.getCmp('visitor_panel').collapse();
+                                            }
+                                        }
+                                    }
+                                    ]
+                        }
+                        ]
+            }
+            ]
 });
 
 // Select an Aggregation Scheme Tab Panel (id: aggregation_panel)
 Ext.define('CG.view.AggregationPanel', {
-	extend : 'Ext.panel.Panel',
+    extend : 'Ext.panel.Panel',
 	xtype : 'cgx3_urbanflowpanel',
 	bodyPadding : '5 10',
 	collapseMode : 'header',

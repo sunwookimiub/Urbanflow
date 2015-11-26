@@ -112,9 +112,10 @@ var cityOption =
     ]
 }
 
-Ext.define('CG.view.FlumapperPanel', {
+// Select a City tab panel (id: city_panel)
+Ext.define('CG.view.CityPanel', {
 	extend : 'Ext.panel.Panel',
-	xtype : 'cgx1_flumapperpanel',
+	xtype : 'cgx1_urbanflowpanel',
 	bodyPadding : '5 10',
 	collapseMode : 'header',
 	items : [ 
@@ -143,13 +144,43 @@ Ext.define('CG.view.FlumapperPanel', {
                             items: cityOption
                         }
                         ]
-            }
-],
-    buttons : [
+            },
             {
+                xtype: 'button',
                 text: 'Next',
-                
+                listeners: {
+                    click: function(btn) {
+                        Ext.getCmp('city_panel').collapse();
+                        this.setText('I was clicked!');
+                    }
+                }
             }
+        ]
+});
+
+// Identify Frequent Visitors Tab Panel (id: visitor_panel)
+Ext.define('CG.view.VisitorPanel', {
+	extend : 'Ext.panel.Panel',
+	xtype : 'cgx2_urbanflowpanel',
+	bodyPadding : '5 10',
+	collapseMode : 'header',
+	items : [ 
+{
+
+}
+        ]
+});
+
+// Select an Aggregation Scheme Tab Panel (id: aggregation_panel)
+Ext.define('CG.view.AggregationPanel', {
+	extend : 'Ext.panel.Panel',
+	xtype : 'cgx3_urbanflowpanel',
+	bodyPadding : '5 10',
+	collapseMode : 'header',
+	items : [ 
+{
+
+}
         ]
 });
 
@@ -160,9 +191,10 @@ var emptystore = Ext.create('Ext.data.JsonStore', {
     ]
 });
 
+// Results Panel (id: results_panel)
 Ext.define('CG.view.ResultPanel', {
 		extend: 'Ext.panel.Panel',
-		xtype: 'cgx2_flumapperpanel',
+		xtype: 'cgx4_urbanflowpanel',
 		bodyPadding: '5 10',
 		collapseMode: 'header',
 		items: [

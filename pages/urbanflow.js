@@ -86,16 +86,35 @@ CG.global.layoutConfig.push({
         animate : true
     },
     items : [ {
-        xtype : 'cgx1_flumapperpanel',
+        xtype : 'cgx1_urbanflowpanel',
         id : 'city_panel',
         title : 'Select a City',
         scroll : 'both',
         minHeight : 300,
         minWidth : 300,
         width : 300
-    },{
-        xtype : 'cgx2_flumapperpanel',
-        id : 'result_panel',
+    },
+    {
+        xtype : 'cgx2_urbanflowpanel',
+        id : 'visitor_panel',
+        title : 'Identify Frequent Visitors',
+        scroll : 'both',
+        minHeight : 300,
+        minWidth : 300,
+        width : 300
+    },
+    {
+        xtype : 'cgx3_urbanflowpanel',
+        id : 'aggregation_panel',
+        title : 'Select an Aggregation Scheme',
+        scroll : 'both',
+        minHeight : 300,
+        minWidth : 300,
+        width : 300
+    },
+    {
+        xtype : 'cgx4_urbanflowpanel',
+        id : 'results_panel',
         title : 'Results',
         scroll : 'both',
         minHeight : 300,

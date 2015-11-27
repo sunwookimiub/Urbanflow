@@ -342,12 +342,77 @@ Ext.define('CG.view.AggregationPanel', {
         ]
 });
 
-var emptystore = Ext.create('Ext.data.JsonStore', {
-    fields: ['date', 'value1', 'value2'],
-    data: [
-        {'date':'2020-01-01', 'value1':10, 'value2':12}
-    ]
+var langStore = Ext.create('Ext.data.Store',{
+                fields:['Id','Name'],
+                data:[
+                {Id:'eng',Name:'English'},
+                {Id:'esp',Name:'Spanish'},
+                {Id:'fre',Name:'French'},
+                {Id:'chi',Name:'Chinese'}
+                ]
 });
+
+var aggregationOptions=  
+	{
+		xtype : 'fieldset',
+		title : 'Query Options',
+		name : 'ufqueryoptions',
+		columns : 3,
+		hideMode: 'visibility',
+		items : [
+			{
+					xtype: 'label',
+					name: 'landuse1title',
+					text: 'Purpose: Landuse 1'
+			},
+			{
+					xtype: 'numberfield',
+					name: 'landuse1value'
+			},
+			{
+					xtype: 'label',
+					name: 'landuse2title',
+					text: 'Purpose: Landuse 2'
+			},	
+			{
+					xtype: 'numberfield',
+					name: 'landuse2value'
+			},
+        		{
+	        		xtype: 'combobox',
+	                	margin: '10 10 0 0',
+	                	fieldLabel: 'Dominant Lang',
+	                	store: langStore,
+	                	displayField: 'Name',
+	                	valueField: 'Id',
+	               		queryMode: 'local',
+	               		editable: false,
+	               		forceSelection: true,
+	                	value: '201407'
+        		},
+			{
+					xtype : 'label',
+                    margin: '20 10 0 0',
+					name : 'ufsliderlabeltitle',
+					text : 'Minimum Percentage'
+			},
+			{
+					xtype : 'slider',
+                    name : 'ufslider',
+                    width : 250,
+                    useTips : true,
+                    margin : '10 0 0 5',
+                    maxValue : 100,
+                    value : 20
+			},
+			{
+					xtype : 'button',
+					width : 150,
+					margin : '10 0 0 0',
+					text : 'Display',
+			}
+		]
+}
 
 // Results Panel (id: results_panel)
 Ext.define('CG.view.ResultPanel', {
@@ -356,88 +421,32 @@ Ext.define('CG.view.ResultPanel', {
 		bodyPadding: '5 10',
 		collapseMode: 'header',
 		items: [
-		{
-			xtype: 'fieldset',
-			title: 'Movement Measures',
-			name: 'mmflowmeasures',
-			layout: {
-				type: 'vbox',
-				align: 'middle'
-			},
-			items:[{
-				xtype: 'label',
-				name: 'flowinfolabel1',
-				text: ''
-			},{
-				xtype: 'label',
-				name: 'flowinfolabel2',
-				text: ''
-			},{
-				xtype: 'label',
-				name: 'flowinfolabel3',
-				text: ''
-			},{
-				xtype: 'label',
-				name: 'flowinfolabel4',
-				text:''
-			}
-			],
-		},{
-			xtype: 'fieldset',
-			title: 'Movement History',
-			name: 'mmflowhistory',
-			items:[{
-			xtype: 'chart',
-			width: 260,
-			height: 260,
-			store: emptystore,
-			legend: {
-				position: "bottom"
-			},
-			axes: [
-			{
-            			title: 'Date',
-            			type: 'Category',
-            			position: 'bottom',
-            			fields: ['date'],
-				grid:true,
-				labelTitle: {
-					font:'bold 12x Arial'
-				} 
-        		},
-        		{
-            			title: 'Number of Movements',
-            			type: 'Numeric',
-            			position: 'left',
-            			fields: ['value1', 'value2'],
-				//minimum:0,
-				minorTickSteps:1,
-				labelTitle: {
-					font:'bold 12x Arial'
-				}
-        		}],
-    			series: [
-        		{
-            			type: 'line',
-            			xField: 'date',
-            			yField: 'value1',
-				title: "Direction 1",
-				markerConfig: {
-					size:4,
-					radius:4,
-					"stroke-width": 0
-				}
-        		},{
-				type: 'line',
-				xField: 'date',
-				yField: 'value2',
-				title: "Direction 2",
-				markerConfig: {
-					size:4,
-					radius:4,
-					"stroke-width": 0
-				}
-			}]
-			}]
-		}]
+	            {
+                xtype : 'tabpanel', // Create a tab panel
+                width:  300,
+                height: 300,
+                activeTab: 0,
+                items:  [
+                        {
+                            // The grid panel to select the purpose and dominant language
+                            title: 'Query',
+                            bodyPadding: 10,
+                            items: aggregationOptions
+                        },
+                        {
+                            // The panel to download
+                            title: 'Download',
+                            bodyPadding: 10,
+                            items: [
+                            {
+                                xtype : 'button',
+                                width : 150,
+                                margin : '10 0 0 0',
+                                text : 'Download',
+                            }
+                                ]
+                        }
+                        ]
+            }
+        ]
 });

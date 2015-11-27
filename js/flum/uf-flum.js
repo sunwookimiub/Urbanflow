@@ -255,6 +255,54 @@ Ext.define('CG.view.VisitorPanel', {
             ]
 });
 
+// Sample data store for the grid panel
+var aggregationStore = Ext.create('Ext.data.Store',{
+                fields:['Id','Name'],
+                data:[
+                {Id:'ct',Name:'Census Tract'},
+                {Id:'cb',Name:'Census Blocks'},
+                {Id:'zc',Name:'Zip Codes'}
+                ]
+});
+
+// Grid panel for selecting the aggregation scheme
+var aggregationGrid = Ext.create('Ext.grid.Panel', {
+        store: aggregationStore,
+        columns: [
+            { header: 'Scheme', dataIndex: 'Name' 
+            }
+    ],
+        height: 160,
+        width: 102,
+        renderTo: Ext.getBody()
+});
+
+// Form panel for users to upload their shapefiles
+var aggregationForm = Ext.create('Ext.form.Panel', {
+    title: 'Upload a File',
+    width: 270,
+    bodyPadding: 10,
+    frame: true,
+    renderTo: Ext.getBody(),    
+    items: [{
+        xtype: 'filefield',
+    name: 'file',
+    fieldLabel: 'File',
+    labelWidth: 50,
+    msgTarget: 'side',
+    allowBlank: false,
+    anchor: '100%',
+    buttonText: 'Select File...'
+    }],
+
+    buttons: [{
+        text: 'Upload',
+    handler: function() {
+        var form = this.up('form').getForm();
+    }
+    }]
+});
+
 // Select an Aggregation Scheme Tab Panel (id: aggregation_panel)
 Ext.define('CG.view.AggregationPanel', {
     extend : 'Ext.panel.Panel',
@@ -262,9 +310,35 @@ Ext.define('CG.view.AggregationPanel', {
 	bodyPadding : '5 10',
 	collapseMode : 'header',
 	items : [ 
-{
-
-}
+	        {
+                xtype : 'tabpanel', // Create a tab panel
+                width:  300,
+                height: 300,
+                activeTab: 0,
+                items:  [
+                        {
+                            // The grid panel to select the city
+                            title: 'Select',
+                            bodyPadding: 10,
+                            items: aggregationGrid
+                        },
+                        {
+                            // The form panel to upload a shapefile
+                            title: 'Upload',
+                            bodyPadding: 10,
+                            items: aggregationForm
+                        }
+                        ]
+            },
+            {
+                xtype: 'button',
+                text: 'Next',
+                listeners: {
+                    click: function(btn) {
+                        Ext.getCmp('aggregation_panel').collapse();
+                    }
+                }
+            }
         ]
 });
 

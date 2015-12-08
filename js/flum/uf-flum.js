@@ -175,7 +175,7 @@ var scatterStore = new Ext.data.JsonStore({
     model: 'Details',
     proxy: {
         type: 'ajax',
-        url: '/home/data/fig1.json',
+        url: '/home/data/newfig1.json',
         reader: {
             root: 'data',
             type: 'json'
@@ -190,7 +190,6 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     width: 450,
     height: 300,
     animate: true,
-    theme:'Category2',
     store: scatterStore,
     legend: {
         position: 'right',
@@ -200,11 +199,11 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
         type: 'Numeric',
     position: 'bottom',
     fields: ['Time'],
-    title: 'Sample Values',
+    title: 'Time of Day',
     grid: true,
     minimum: 0
     }, { 
-        title: 'Time',
+        title: 'Tweets Volume (%)',
     type: 'Numeric',
     position: 'left',
     fields: ['land1100', 'land1250', 'land1215', 'land1220', 'land1216', 'land1321'],
@@ -212,8 +211,8 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     series: [{
         type: 'scatter',
         markerConfig: {
-            radius: 2,
-            size: 2
+            radius: 3,
+            size: 3
         },
         axis: 'left',
         xField: 'Time',
@@ -222,8 +221,8 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     {
         type: 'scatter',
         markerConfig: {
-            radius: 2,
-            size: 2
+            radius: 3,
+            size: 3
         },
         axis: 'left',
         xField: 'Time',
@@ -232,8 +231,8 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     {
         type: 'scatter',
         markerConfig: {
-            radius: 2,
-            size: 2
+            radius: 3,
+            size: 3
         },
         axis: 'left',
         xField: 'Time',
@@ -242,8 +241,8 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     {
         type: 'scatter',
         markerConfig: {
-            radius: 2,
-            size: 2
+            radius: 3,
+            size: 3
         },
         axis: 'left',
         xField: 'Time',
@@ -252,8 +251,8 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     {
         type: 'scatter',
         markerConfig: {
-            radius: 2,
-            size: 2
+            radius: 3,
+            size: 3
         },
         axis: 'left',
         xField: 'Time',
@@ -262,8 +261,8 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     {
         type: 'scatter',
         markerConfig: {
-            radius: 2,
-            size: 2
+            radius: 3,
+            size: 3
         },
         axis: 'left',
         xField: 'Time',
@@ -306,7 +305,8 @@ Ext.define('barDetails', {
         { name: 'landuse4000', type: 'int'},
         { name: 'landuse5000', type: 'int'},
         { name: 'landuse6000', type: 'int'},
-        { name: 'landuse9999', type: 'int'}
+        { name: 'landuse9999', type: 'int'},
+        { name: 'Other', type: 'int'}
     ]
 });
 
@@ -330,12 +330,10 @@ var scatterChart2 = Ext.create('Ext.chart.Chart', {
     height: 300,
     animate: true,
     store: barStore,
-/*    legend: {
+    legend: {
         position: 'right',
-        padding: 10,
-        labelFont: '10px Helvetica, sans-serif',
-        itemSpacing: 5
-    },*/
+        padding: 20
+    },
     axes: [{
         type: 'Category',
         position: 'bottom',
@@ -345,7 +343,7 @@ var scatterChart2 = Ext.create('Ext.chart.Chart', {
         title: 'Number of Clusters',
         type: 'Numeric',
         position: 'left',
-        fields: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999'],
+        fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
         grid: true,
         minimum: 0
     }],
@@ -355,7 +353,8 @@ var scatterChart2 = Ext.create('Ext.chart.Chart', {
         column: true,
         stacked: true,
         xField: 'name',
-        yField: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999']
+        yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
+//        yField: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999', 'Other']
     }] 
 });
 

@@ -54,20 +54,16 @@ var weights;
 
 var dates = ['201407', '201408', '201409', '201410', '201411', '201412'];
 
-/*
-var canvas = movLayer.renderer.canvas.canvas
-	,ctx = canvas.getContext('2d'),
-	*/
-      var delta = 1,
-      type = 'Bezier',
-      neighbors = 10,
-      angleStrength = 10,
-      curviness = 0.5,
-      margin = 0,
-      jsonText,
-      bundle;
+var delta = 1,
+    type = 'Bezier',
+    neighbors = 10,
+    angleStrength = 10,
+    curviness = 0.5,
+    margin = 0,
+    jsonText,
+    bundle;
 
-
+// The left sidebar
 CG.global.layoutConfig.push({
     region : 'west',
     id : 'setting_region',
@@ -122,7 +118,6 @@ CG.global.layoutConfig.push({
         width : 300
 	}]
 });
-
 
 function createBaseMap() {
     var options = {};

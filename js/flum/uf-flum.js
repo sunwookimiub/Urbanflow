@@ -3,7 +3,7 @@
 // * Information Laboratory (CIGI), University of Illinois at   *
 // * Urbana-Champaign, All Rights Reserved.                     *
 // **************************************************************
-// @author Yizhao Gao <ygao29@illinois.edu> Kiumars Soltani <soltani2@illinois.edu> Sunwoo Kim <kim392@illinois.edu>
+// @author Sunwoo Kim <kim392@illinois.edu>
 
 Ext.namespace('CG.flum');
 
@@ -119,7 +119,7 @@ Ext.define('CG.view.CityPanel', {
 	items : [ 
 	        {
                 xtype : 'tabpanel', // Create a tab panel
-                width:  300,
+                width:  280,
                 height: 300,
                 activeTab: 0,
                 items:  [
@@ -149,10 +149,264 @@ Ext.define('CG.view.CityPanel', {
                 listeners: {
                     click: function(btn) {
                         Ext.getCmp('city_panel').collapse();
+                        console.log(barStore);
                     }
                 }
             }
         ]
+});
+
+// Model for data fig1.json
+Ext.define('Details', {
+    extend: 'Ext.data.Model',
+    fields: [
+        { name: 'Time', type: 'int'}, 
+        { name: 'land1100', type: 'int'}, 
+        { name: 'land1250', type: 'int'}, 
+        { name: 'land1215', type: 'int'}, 
+        { name: 'land1220', type: 'int'}, 
+        { name: 'land1216', type: 'int'}, 
+        { name: 'land1321', type: 'int'}
+    ]
+});
+
+// Data loaded from fig1.json
+var scatterStore = new Ext.data.JsonStore({
+    model: 'Details',
+    proxy: {
+        type: 'ajax',
+        url: '/home/data/fig1.json',
+        reader: {
+            root: 'data',
+            type: 'json'
+        }
+    },
+    autoLoad: true,
+});
+
+// The first chart displayed on the top left
+var scatterChart = Ext.create('Ext.chart.Chart', {
+    renderTo: Ext.getBody(),
+    width: 450,
+    height: 300,
+    animate: true,
+    theme:'Category2',
+    store: scatterStore,
+    legend: {
+        position: 'right',
+        padding: 20
+    },
+    axes: [{
+        type: 'Numeric',
+    position: 'bottom',
+    fields: ['Time'],
+    title: 'Sample Values',
+    grid: true,
+    minimum: 0
+    }, { 
+        title: 'Time',
+    type: 'Numeric',
+    position: 'left',
+    fields: ['land1100', 'land1250', 'land1215', 'land1220', 'land1216', 'land1321'],
+    }],
+    series: [{
+        type: 'scatter',
+        markerConfig: {
+            radius: 2,
+            size: 2
+        },
+        axis: 'left',
+        xField: 'Time',
+        yField: 'land1100'
+    },
+    {
+        type: 'scatter',
+        markerConfig: {
+            radius: 2,
+            size: 2
+        },
+        axis: 'left',
+        xField: 'Time',
+        yField: 'land1250'
+    },
+    {
+        type: 'scatter',
+        markerConfig: {
+            radius: 2,
+            size: 2
+        },
+        axis: 'left',
+        xField: 'Time',
+        yField: 'land1215'
+    },
+    {
+        type: 'scatter',
+        markerConfig: {
+            radius: 2,
+            size: 2
+        },
+        axis: 'left',
+        xField: 'Time',
+        yField: 'land1220'
+    },
+    {
+        type: 'scatter',
+        markerConfig: {
+            radius: 2,
+            size: 2
+        },
+        axis: 'left',
+        xField: 'Time',
+        yField: 'land1216'
+    },
+    {
+        type: 'scatter',
+        markerConfig: {
+            radius: 2,
+            size: 2
+        },
+        axis: 'left',
+        xField: 'Time',
+        yField: 'land1321'
+    },
+]
+});
+
+// Model for data fig3.json
+Ext.define('barDetails', {
+    extend: 'Ext.data.Model',
+    fields: [
+        { name: 'name', type: 'string'}, 
+        { name: 'landuse1100', type: 'int'}, 
+        { name: 'landuse1211', type: 'int'}, 
+        { name: 'landuse1212', type: 'int'}, 
+        { name: 'landuse1214', type: 'int'}, 
+        { name: 'landuse1215', type: 'int'}, 
+        { name: 'landuse1216', type: 'int'}, 
+        { name: 'landuse1220', type: 'int'}, 
+        { name: 'landuse1240', type: 'int'}, 
+        { name: 'landuse1250', type: 'int'}, 
+        { name: 'landuse1300', type: 'int'}, 
+        { name: 'landuse1310', type: 'int'}, 
+        { name: 'landuse1321', type: 'int'}, 
+        { name: 'landuse1322', type: 'int'}, 
+        { name: 'landuse1330', type: 'int'}, 
+        { name: 'landuse1340', type: 'int'}, 
+        { name: 'landuse1350', type: 'int'},
+        { name: 'landuse1360', type: 'int'},
+        { name: 'landuse1400', type: 'int'},
+        { name: 'landuse1500', type: 'int'},
+        { name: 'landuse1511', type: 'int'},
+        { name: 'landuse1512', type: 'int'},
+        { name: 'landuse1520', type: 'int'},
+        { name: 'landuse1530', type: 'int'},
+        { name: 'landuse1540', type: 'int'},
+        { name: 'landuse2000', type: 'int'},
+        { name: 'landuse3000', type: 'int'},
+        { name: 'landuse4000', type: 'int'},
+        { name: 'landuse5000', type: 'int'},
+        { name: 'landuse6000', type: 'int'},
+        { name: 'landuse9999', type: 'int'}
+    ]
+});
+
+// Data loaded from fig3.json
+var barStore = new Ext.data.JsonStore({
+    model: 'barDetails',
+    proxy: {
+        type: 'ajax',
+        url: '/home/data/newfig3.json',
+        reader: {
+            root: 'data',
+            type: 'json'
+        }
+    },
+    autoLoad: true,
+});
+
+var scatterChart2 = Ext.create('Ext.chart.Chart', {
+    renderTo: Ext.getBody(),
+    width: 450,
+    height: 300,
+    animate: true,
+    store: barStore,
+/*    legend: {
+        position: 'right',
+        padding: 10,
+        labelFont: '10px Helvetica, sans-serif',
+        itemSpacing: 5
+    },*/
+    axes: [{
+        type: 'Category',
+        position: 'bottom',
+        fields: ['name'],
+        title: 'Rank',
+    }, { 
+        title: 'Number of Clusters',
+        type: 'Numeric',
+        position: 'left',
+        fields: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999'],
+        grid: true,
+        minimum: 0
+    }],
+    series: [{
+        type: 'bar',
+        highlight: true,
+        column: true,
+        stacked: true,
+        xField: 'name',
+        yField: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999']
+    }] 
+});
+
+// Boxplot
+
+// Component containing html
+var boxComp = new Ext.Component({
+    html: '<canvas id="boxcanvas"></canvas> ',
+  listeners: {
+        boxready: function() {
+//            document.getElementById('boxcanvas').width = this.getWidth();
+            document.getElementById('boxcanvas').width = 600;
+//            document.getElementById('boxcanvas').height = this.getHeight();
+            document.getElementById('boxcanvas').height = 270;
+            var c = document.getElementById("boxcanvas");
+            var ctx = c.getContext("2d");
+            ctx.rect(50,20,450,200);
+            ctx.stroke(); 
+        }
+    }
+});
+
+// Image file loading the boxplot image
+var boxImage = Ext.create('Ext.Img', {
+    width: 600,
+    height: 300,
+    src: '/home/data/boxplot.png',
+    renderTo: Ext.getBody()
+});
+
+//Floating window for displaying the graphs
+var floatwind = new Ext.create('Ext.form.Panel', {
+    title: 'Models display',
+    width: 1000,
+    height: 630,
+    floating: true,
+    closable: true,
+    draggable: true,
+    items: 
+    [ {
+        layout: {type: 'hbox'},
+      items:  [
+        scatterChart,
+        scatterChart2
+        ]
+    },{
+        layout: {type: 'hbox', align: 'center', pack: 'center'},
+//    items: boxComp
+        items: boxImage
+    }
+    ]
 });
 
 // Sample spatial clustering algorithm store for the grid panel
@@ -179,6 +433,7 @@ var visitorGrid = Ext.create('Ext.grid.Panel', {
             cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
                 if(rowIndex===0){
                     Ext.getCmp('visitortab').setActiveTab('paramtab');
+                        floatwind.show();
                 }
             }
         }
@@ -222,7 +477,7 @@ Ext.define('CG.view.VisitorPanel', {
             {
                 xtype : 'tabpanel', // Create a tab panel
                 id : 'visitortab',
-                width:  300,
+                width:  280,
                 height: 300,
                 activeTab: 0,
                 items:  [
@@ -312,7 +567,7 @@ Ext.define('CG.view.AggregationPanel', {
 	items : [ 
 	        {
                 xtype : 'tabpanel', // Create a tab panel
-                width:  300,
+                width:  280,
                 height: 300,
                 activeTab: 0,
                 items:  [
@@ -423,7 +678,7 @@ Ext.define('CG.view.ResultPanel', {
 		items: [
 	            {
                 xtype : 'tabpanel', // Create a tab panel
-                width:  300,
+                width:  280,
                 height: 300,
                 activeTab: 0,
                 items:  [

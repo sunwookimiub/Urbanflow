@@ -149,7 +149,6 @@ Ext.define('CG.view.CityPanel', {
                 listeners: {
                     click: function(btn) {
                         Ext.getCmp('city_panel').collapse();
-                        console.log(barStore);
                     }
                 }
             }
@@ -558,49 +557,6 @@ var visitorParam =
     ]
 }
 
-// Identify Frequent Visitors Tab Panel (id: visitor_panel)
-Ext.define('CG.view.VisitorPanel', {
-	extend : 'Ext.panel.Panel',
-	xtype : 'cgx2_urbanflowpanel',
-	bodyPadding : '5 10',
-	collapseMode : 'header',
-	items : [ 
-            {
-                xtype : 'tabpanel', // Create a tab panel
-                id : 'visitortab',
-                width:  280,
-                height: 300,
-                activeTab: 0,
-                items:  [
-                        {
-                            // The grid panel to select the algorithm
-                            title: 'Model',
-                            bodyPadding: 10,
-                            items: visitorGrid
-                        },
-                        {
-                            // Fieldset component to select parameters
-                            title: 'Parameters',
-                            id : 'paramtab',
-                            bodyPadding: 10,
-                            items: [
-                                    visitorParam,
-                                    {
-                                        xtype: 'button',
-                                        text: 'Next',
-                                        listeners: {
-                                            click: function(btn) {
-                                                Ext.getCmp('visitor_panel').collapse();
-                                            }
-                                        }
-                                    }
-                                    ]
-                        }
-                        ]
-            }
-            ]
-});
-
 // Sample data store for the grid panel
 var aggregationStore = Ext.create('Ext.data.Store',{
                 fields:['Id','Name'],
@@ -609,25 +565,6 @@ var aggregationStore = Ext.create('Ext.data.Store',{
                 {Id:'cb',Name:'Census Blocks'},
                 {Id:'zc',Name:'Zip Codes'}
                 ]
-});
-
-// Grid panel for selecting the aggregation scheme
-var aggregationGrid = Ext.create('Ext.grid.Panel', {
-        store: aggregationStore,
-        columns: [
-            { header: 'Scheme', dataIndex: 'Name' 
-            }
-    ],
-        height: 160,
-        width: 102,
-        renderTo: Ext.getBody(),
-        listeners: {
-            cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
-                if(rowIndex===0){
-                    testZoom();
-                }
-            }
-        }
 });
 
 // Form panel for users to upload their shapefiles
@@ -653,45 +590,6 @@ var aggregationForm = Ext.create('Ext.form.Panel', {
         var form = this.up('form').getForm();
     }
     }]
-});
-
-// Select an Aggregation Scheme Tab Panel (id: aggregation_panel)
-Ext.define('CG.view.AggregationPanel', {
-    extend : 'Ext.panel.Panel',
-	xtype : 'cgx3_urbanflowpanel',
-	bodyPadding : '5 10',
-	collapseMode : 'header',
-	items : [ 
-	        {
-                xtype : 'tabpanel', // Create a tab panel
-                width:  280,
-                height: 300,
-                activeTab: 0,
-                items:  [
-                        {
-                            // The grid panel to select the city
-                            title: 'Select',
-                            bodyPadding: 10,
-                            items: aggregationGrid
-                        },
-                        {
-                            // The form panel to upload a shapefile
-                            title: 'Upload',
-                            bodyPadding: 10,
-                            items: aggregationForm
-                        }
-                        ]
-            },
-            {
-                xtype: 'button',
-                text: 'Next',
-                listeners: {
-                    click: function(btn) {
-                        Ext.getCmp('aggregation_panel').collapse();
-                    }
-                }
-            }
-        ]
 });
 
 //----------------------------------------------------

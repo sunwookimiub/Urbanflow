@@ -35,7 +35,7 @@ var aggregationGrid = Ext.create('Ext.grid.Panel', {
         listeners: {
             cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
                 if(rowIndex===0){
-                    testZoom();
+                    getCensusTract();
                 }
             }
         }
@@ -77,7 +77,6 @@ Ext.define('CG.view.VisitorPanel', {
                                             click: function(btn) {
                                                 Ext.getCmp('visitor_panel').collapse();
                                                 aggregationGrid.show();
-                                                console.log(aggregationGrid);
                                             }
                                         }
                                     }
@@ -241,25 +240,51 @@ bounds.extend(init_ne);
 bounds.toBBOX();
 CG.global.map.zoomToExtent(bounds);
 
-// Testing out zoom and highlight
-// TODO: work on interactivity.
-function testZoom() {
+// Get Census Tract, highlight, and
+function getCensusTract() {
     var testLayer = new OpenLayers.Layer.Vector("GeoJSON", {
         projection: "EPSG:4326",
         strategies: [new OpenLayers.Strategy.Fixed()],
         eventListeners: {           
-            'loadend': function (evt) {//THE LOADEND EVENT LISTENER - WHEN THE LAYER IS DONE LOADING...
-                CG.global.map.zoomToExtent(testLayer.getDataExtent());//ZOOM TO ITS EXTENT!
-            }//END OF THE LOADEND EVENT
+            'loadend': function (evt) {
+                CG.global.map.zoomToExtent(testLayer.getDataExtent());
+            }
         },
         protocol: new OpenLayers.Protocol.HTTP({
             url: "/home/data/acs2013_5yr_geojson/acs2013_5yr.geojson",
         format: new OpenLayers.Format.GeoJSON()
         })
     });
+    testLayer.events.on({
+        featureselected: function(event) {
+            var feature = event.feature;
+            var id = event.feature.id;
+            console.log(id);
+        }
+    });
+
+    var report = function(e) {
+        OpenLayers.Console.log(e.type, e.feature.id);
+    };
 
     CG.global.map.addLayer(testLayer);
-    var select = new OpenLayers.Control.SelectFeature(testLayer);
+    var select = new OpenLayers.Control.SelectFeature(testLayer, {
+        hover: true,
+        highlightOnly: true,
+        renderIntent: "temporary",
+        eventListeners: {
+            beforefeaturehighlighted: report,
+        featurehighlighted: report,
+        featureunhighlighted: report
+        }
+    });
+
+    var selectCtrl = new OpenLayers.Control.SelectFeature(testLayer,
+            {clickout: true}
+            );
+
     CG.global.map.addControl(select);
     select.activate();
+    CG.global.map.addControl(selectCtrl);
+    selectCtrl.activate();
 }

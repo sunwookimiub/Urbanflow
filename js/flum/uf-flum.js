@@ -187,7 +187,7 @@ var scatterStore = new Ext.data.JsonStore({
 // The first chart displayed on the top left
 var scatterChart = Ext.create('Ext.chart.Chart', {
     renderTo: Ext.getBody(),
-    width: 450,
+    width: 500,
     height: 300,
     animate: true,
     store: scatterStore,
@@ -209,7 +209,11 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
     fields: ['land1100', 'land1250', 'land1215', 'land1220', 'land1216', 'land1321'],
     }],
     series: [{
-        type: 'scatter',
+        type: 'line',
+        highlight: {
+            size: 3,
+            radius: 3
+        },
         markerConfig: {
             radius: 3,
             size: 3
@@ -219,7 +223,11 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
         yField: 'land1100'
     },
     {
-        type: 'scatter',
+        type: 'line',
+        highlight: {
+            size: 3,
+            radius: 3
+        },
         markerConfig: {
             radius: 3,
             size: 3
@@ -229,7 +237,11 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
         yField: 'land1250'
     },
     {
-        type: 'scatter',
+        type: 'line',
+        highlight: {
+            size: 3,
+            radius: 3
+        },
         markerConfig: {
             radius: 3,
             size: 3
@@ -239,7 +251,11 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
         yField: 'land1215'
     },
     {
-        type: 'scatter',
+        type: 'line',
+        highlight: {
+            size: 3,
+            radius: 3
+        },
         markerConfig: {
             radius: 3,
             size: 3
@@ -249,7 +265,11 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
         yField: 'land1220'
     },
     {
-        type: 'scatter',
+        type: 'line',
+        highlight: {
+            size: 3,
+            radius: 3
+        },
         markerConfig: {
             radius: 3,
             size: 3
@@ -259,7 +279,11 @@ var scatterChart = Ext.create('Ext.chart.Chart', {
         yField: 'land1216'
     },
     {
-        type: 'scatter',
+        type: 'line',
+        highlight: {
+            size: 3,
+            radius: 3
+        },
         markerConfig: {
             radius: 3,
             size: 3
@@ -326,7 +350,7 @@ var barStore = new Ext.data.JsonStore({
 
 var scatterChart2 = Ext.create('Ext.chart.Chart', {
     renderTo: Ext.getBody(),
-    width: 450,
+    width: 500,
     height: 300,
     animate: true,
     store: barStore,
@@ -343,7 +367,9 @@ var scatterChart2 = Ext.create('Ext.chart.Chart', {
         title: 'Number of Clusters',
         type: 'Numeric',
         position: 'left',
-        fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
+        // Discarding 'others'
+        //fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
+        fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
         grid: true,
         minimum: 0
     }],
@@ -353,7 +379,9 @@ var scatterChart2 = Ext.create('Ext.chart.Chart', {
         column: true,
         stacked: true,
         xField: 'name',
-        yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
+        //yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
+        // Discarding 'others'
+        yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
 //        yField: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999', 'Other']
     }] 
 });
@@ -385,6 +413,70 @@ var boxImage = Ext.create('Ext.Img', {
     renderTo: Ext.getBody()
 });
 
+/*
+var margin = {top: 10, right: 50, bottom: 20, left: 50},
+        width = 120 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+var min = Infinity,
+        max = -Infinity;
+var chart = d3.box()
+        .whiskers(iqr(1.5))
+        .width(width)
+        .height(height);
+        d3.csv("/home/data/morley.csv", function(error, csv) {
+            if (error) throw error;
+            var data = [];
+            csv.forEach(function(x) {
+                var e = Math.floor(x.Expt - 1),
+                r = Math.floor(x.Run - 1),
+                s = Math.floor(x.Speed),
+                d = data[e];
+            if (!d) d = data[e] = [s];
+            else d.push(s);
+            if (s > max) max = s;
+            if (s < min) min = s;
+            });
+            chart.domain([min, max]);
+            var svg = d3.select("body").selectAll("svg")
+            .data(data)
+            .enter().append("svg")
+            .attr("class", "box")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.bottom + margin.top)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .call(chart);
+            setInterval(function() {
+                svg.datum(randomize).call(chart.duration(1000));
+            }, 2000);
+        });
+function randomize(d) {
+    if (!d.randomizer) d.randomizer = randomizer(d);
+    return d.map(d.randomizer);
+}
+function randomizer(d) {
+    var k = d3.max(d) * .02;
+    return function(d) {
+        return Math.max(min, Math.min(max, d + k * (Math.random() - .5)));
+    };
+}
+function iqr(k) {
+    return function(d, i) {
+        var q1 = d.quartiles[0],
+            q3 = d.quartiles[2],
+            iqr = (q3 - q1) * k,
+            i = -1,
+            j = d.length;
+        while (d[++i] < q1 - iqr);
+        while (d[--j] > q3 + iqr);
+        return [i, j];
+    };
+}
+*/
+
+
+
+
 //Floating window for displaying the graphs
 var floatwind = new Ext.create('Ext.form.Panel', {
     title: 'Models display',
@@ -396,41 +488,41 @@ var floatwind = new Ext.create('Ext.form.Panel', {
     items: 
     [ {
         layout: {type: 'hbox'},
-      items:  [
-        scatterChart,
-        scatterChart2
-        ]
+    items:  [
+    scatterChart,
+    scatterChart2
+    ]
     },{
         layout: {type: 'hbox', align: 'center', pack: 'center'},
-//    items: boxComp
-        items: boxImage
+    //    items: boxComp
+    items: boxImage
     }
-    ]
+]
 });
 
 // Sample spatial clustering algorithm store for the grid panel
 var visitorStore = Ext.create('Ext.data.Store',{
-                fields:['Id','Name'],
-                data:[
-                {Id:'db',Name:'DBSCAN'},
-                {Id:'seq',Name:'SeqScan'},
-                {Id:'gm',Name:'Gaussian Mixture'}
-                ]
+    fields:['Id','Name'],
+    data:[
+{Id:'db',Name:'DBSCAN'},
+{Id:'seq',Name:'SeqScan'},
+{Id:'gm',Name:'Gaussian Mixture'}
+]
 });
 
 // Grid panel for selecting the algorithm
 var visitorGrid = Ext.create('Ext.grid.Panel', {
-        store: visitorStore,
-        columns: [
-            { header: 'Model', dataIndex: 'Name' 
-            }
-    ],
-        height: 160,
-        width: 102,
-        renderTo: Ext.getBody(),
-        listeners: {
-            cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
-                if(rowIndex===0){
+    store: visitorStore,
+    columns: [
+{ header: 'Model', dataIndex: 'Name' 
+}
+],
+height: 160,
+width: 102,
+renderTo: Ext.getBody(),
+listeners: {
+    cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
+        if(rowIndex===0){
                     Ext.getCmp('visitortab').setActiveTab('paramtab');
                         floatwind.show();
                 }
@@ -528,7 +620,14 @@ var aggregationGrid = Ext.create('Ext.grid.Panel', {
     ],
         height: 160,
         width: 102,
-        renderTo: Ext.getBody()
+        renderTo: Ext.getBody(),
+        listeners: {
+            cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
+                if(rowIndex===0){
+                    testZoom();
+                }
+            }
+        }
 });
 
 // Form panel for users to upload their shapefiles
@@ -548,7 +647,6 @@ var aggregationForm = Ext.create('Ext.form.Panel', {
     anchor: '100%',
     buttonText: 'Select File...'
     }],
-
     buttons: [{
         text: 'Upload',
     handler: function() {
@@ -596,6 +694,7 @@ Ext.define('CG.view.AggregationPanel', {
         ]
 });
 
+//----------------------------------------------------
 var langStore = Ext.create('Ext.data.Store',{
                 fields:['Id','Name'],
                 data:[
@@ -604,6 +703,15 @@ var langStore = Ext.create('Ext.data.Store',{
                 {Id:'fre',Name:'French'},
                 {Id:'chi',Name:'Chinese'}
                 ]
+});
+
+var landStore = Ext.create('Ext.data.Store',{
+                    fields: ['Id', 'Label'],
+                    data:[
+                    {Id: 'l1', Label:'Land1'},
+                    {Id: 'l2', Label:'Land2'},
+                    {Id: 'l3', Label:'Land3'}
+                    ]
 });
 
 var aggregationOptions=  
@@ -620,8 +728,14 @@ var aggregationOptions=
 					text: 'Purpose: Landuse 1'
 			},
 			{
-					xtype: 'numberfield',
-					name: 'landuse1value'
+					xtype: 'combobox',
+					name: 'landuse1value',
+                    store: landStore,
+                    displayField: 'Label',
+                    valueField: 'Id',
+                    queryMode: 'local',
+                    editable: false,
+                    forceSelection: true
 			},
 			{
 					xtype: 'label',
@@ -629,21 +743,27 @@ var aggregationOptions=
 					text: 'Purpose: Landuse 2'
 			},	
 			{
-					xtype: 'numberfield',
-					name: 'landuse2value'
+					xtype: 'combo',
+					name: 'landuse2value',
+                    store: landStore,
+                    displayField: 'Label',
+                    valueField: 'Id',
+                    queryMode: 'local',
+                    editable: false,
+                    forceSelection: true
 			},
         		{
 	        		xtype: 'combobox',
-	                	margin: '10 10 0 0',
-	                	fieldLabel: 'Dominant Lang',
-	                	store: langStore,
-	                	displayField: 'Name',
-	                	valueField: 'Id',
-	               		queryMode: 'local',
-	               		editable: false,
-	               		forceSelection: true,
-	                	value: '201407'
-        		},
+                    margin: '10 10 0 0',
+                    fieldLabel: 'Dominant Lang',
+                    store: langStore,
+                    displayField: 'Name',
+                    valueField: 'Id',
+                    queryMode: 'local',
+                    editable: false,
+                    forceSelection: true,
+                    value: '201407'
+                },
 			{
 					xtype : 'label',
                     margin: '20 10 0 0',

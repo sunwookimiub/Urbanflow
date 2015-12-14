@@ -474,27 +474,72 @@ function iqr(k) {
 */
 
 
+var scatterChart3 = Ext.create('Ext.chart.Chart', {
+    renderTo: Ext.getBody(),
+    width: 500,
+    height: 300,
+    animate: true,
+    store: barStore,
+    legend: {
+        position: 'right',
+        padding: 20
+    },
+    axes: [{
+        type: 'Category',
+        position: 'bottom',
+        fields: ['name'],
+        title: 'Rank',
+    }, { 
+        title: 'Number of Clusters',
+        type: 'Numeric',
+        position: 'left',
+        // Discarding 'others'
+        //fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
+        fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
+        grid: true,
+        minimum: 0
+    }],
+    series: [{
+        type: 'bar',
+        highlight: true,
+        column: true,
+        stacked: true,
+        xField: 'name',
+        //yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
+        // Discarding 'others'
+        yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
+//        yField: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999', 'Other']
+    }] 
+});
 
 
 //Floating window for displaying the graphs
-var floatwind = new Ext.create('Ext.form.Panel', {
+var floatwind = new Ext.create('Ext.tab.Panel', {
     title: 'Models display',
-    width: 1000,
+    width: 700,
     height: 630,
     floating: true,
     closable: true,
     draggable: true,
     items: 
     [ {
-        layout: {type: 'hbox'},
-    items:  [
-    scatterChart,
-    scatterChart2
-    ]
+        title: 'Rank',
+        xtype: 'panel',
+        autoScroll: true,
+        layout: {type: 'vbox', align: 'center'},
+        items:  [
+        scatterChart,
+        scatterChart2,
+        boxImage
+        ]
     },{
-        layout: {type: 'hbox', align: 'center', pack: 'center'},
-    //    items: boxComp
-    items: boxImage
+        title: 'Landuse',
+        xtype: 'panel',
+        autoScroll: true,
+        layout: {type: 'vbox', align: 'center'},
+        items:  [
+            scatterChart3
+        ]
     }
 ]
 });
@@ -612,6 +657,15 @@ var landStore = Ext.create('Ext.data.Store',{
                     ]
 });
 
+var rankStore = Ext.create('Ext.data.Store',{
+                    fields: ['Id', 'Label'],
+                    data:[
+                    {Id: 'r1', Label:'Rank1'},
+                    {Id: 'r2', Label:'Rank2'},
+                    {Id: 'r3', Label:'Rank3'}
+                    ]
+});
+
 var aggregationOptions=  
 	{
 		xtype : 'fieldset',
@@ -623,7 +677,7 @@ var aggregationOptions=
 			{
 					xtype: 'label',
 					name: 'landuse1title',
-					text: 'Purpose: Landuse 1'
+					text: 'Original'
 			},
 			{
 					xtype: 'combobox',
@@ -638,7 +692,7 @@ var aggregationOptions=
 			{
 					xtype: 'label',
 					name: 'landuse2title',
-					text: 'Purpose: Landuse 2'
+					text: 'Destination'
 			},	
 			{
 					xtype: 'combo',
@@ -650,6 +704,61 @@ var aggregationOptions=
                     editable: false,
                     forceSelection: true
 			},
+			{
+					xtype: 'label',
+					name: 'rank1title',
+					text: 'Rank 1'
+			},
+			{
+					xtype: 'combobox',
+					name: 'rank1value',
+                    store: rankStore,
+                    displayField: 'Label',
+                    valueField: 'Id',
+                    queryMode: 'local',
+                    editable: false,
+                    forceSelection: true
+			},
+			{
+					xtype: 'label',
+					name: 'rank2title',
+					text: 'Rank 2'
+			},	
+			{
+					xtype: 'combo',
+					name: 'rank2value',
+                    store: rankStore,
+                    displayField: 'Label',
+                    valueField: 'Id',
+                    queryMode: 'local',
+                    editable: false,
+                    forceSelection: true
+			},
+			{
+					xtype: 'checkboxfield',
+                    fieldLabel: 'Show Statistics Plot',
+                    items: [
+                    {
+                        name: 'query',
+                        inputValue: '1',
+                        id: 'checkbox1'
+                    }
+                    ]
+			},
+			{
+					xtype: 'checkboxfield',
+                    fieldLabel: 'Show Spread',
+                    items: [
+                    {
+                        name: 'query',
+                        inputValue: '1',
+                        id: 'checkbox2'
+                    }
+                    ]
+			}
+            /*
+        		{
+            /*
         		{
 	        		xtype: 'combobox',
                     margin: '10 10 0 0',
@@ -683,6 +792,7 @@ var aggregationOptions=
 					margin : '10 0 0 0',
 					text : 'Display',
 			}
+            */
 		]
 }
 

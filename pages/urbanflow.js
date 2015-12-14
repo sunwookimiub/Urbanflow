@@ -77,6 +77,7 @@ Ext.define('CG.view.VisitorPanel', {
                                             click: function(btn) {
                                                 Ext.getCmp('visitor_panel').collapse();
                                                 aggregationGrid.show();
+                                                floatwind.hide();
                                             }
                                         }
                                     }
@@ -257,9 +258,8 @@ function getCensusTract() {
     });
     testLayer.events.on({
         featureselected: function(event) {
-            var feature = event.feature;
-            var id = event.feature.id;
-            console.log(id);
+            var geoid = (event.feature.attributes.geoid);
+            //console.log($.get("server-proxy-new.php?url=http://141.142.168.35:8889/dibbs?command=getclusters&col=test1&id=14000US17031030500"));
         }
     });
 

@@ -6,15 +6,23 @@
 // @author Sunwoo Kim <kim392@illinois.edu>
 
 Ext.namespace('CG.flum');
+var ranks = {"1":"1", "2":"2", "3":"3", "4":"4", "5":"5"};
+var landuses = {"1100": "Residential", "1321": "k-12 Education Schools", "1322": "Post-Secondary Educational", "1220": "Office", "1240": "Cultural/Entertainment"};
+
+function getValues(maps){
+	var arr = [{id: 'null', value: 'All'}];
+	for(var i in maps) arr.push({id: i, value: maps[i]});
+	return Ext.create('Ext.data.Store', {
+	fields: ['id', 'value'],
+	data: arr,
+	});
+}
 
 // Sample data store for the grid panel
 var cityStore = Ext.create('Ext.data.Store',{
                 fields:['Id','Name'],
                 data:[
-                {Id:'Chicago',Name:'Chicago'},
-                {Id:'NYC',Name:'New York City'},
-                {Id:'LA',Name:'Los Angeles'},
-                {Id:'Houston',Name:'Houston'}
+                {Id:'Chicago',Name:'Chicago'}
                 ]
 });
 
@@ -183,286 +191,283 @@ var scatterStore = new Ext.data.JsonStore({
     autoLoad: true,
 });
 
-// The first chart displayed on the top left
-var scatterChart = Ext.create('Ext.chart.Chart', {
-    renderTo: Ext.getBody(),
-    width: 500,
-    height: 300,
-    animate: true,
-    store: scatterStore,
-    legend: {
-        position: 'right',
-        padding: 20
-    },
-    axes: [{
-        type: 'Numeric',
-    position: 'bottom',
-    fields: ['Time'],
-    title: 'Time of Day',
-    grid: true,
-    minimum: 0
-    }, { 
-        title: 'Tweets Volume (%)',
-    type: 'Numeric',
-    position: 'left',
-    fields: ['land1100', 'land1250', 'land1215', 'land1220', 'land1216', 'land1321'],
-    }],
-    series: [{
-        type: 'line',
-        highlight: {
-            size: 3,
-            radius: 3
-        },
-        markerConfig: {
-            radius: 3,
-            size: 3
-        },
-        axis: 'left',
-        xField: 'Time',
-        yField: 'land1100'
-    },
-    {
-        type: 'line',
-        highlight: {
-            size: 3,
-            radius: 3
-        },
-        markerConfig: {
-            radius: 3,
-            size: 3
-        },
-        axis: 'left',
-        xField: 'Time',
-        yField: 'land1250'
-    },
-    {
-        type: 'line',
-        highlight: {
-            size: 3,
-            radius: 3
-        },
-        markerConfig: {
-            radius: 3,
-            size: 3
-        },
-        axis: 'left',
-        xField: 'Time',
-        yField: 'land1215'
-    },
-    {
-        type: 'line',
-        highlight: {
-            size: 3,
-            radius: 3
-        },
-        markerConfig: {
-            radius: 3,
-            size: 3
-        },
-        axis: 'left',
-        xField: 'Time',
-        yField: 'land1220'
-    },
-    {
-        type: 'line',
-        highlight: {
-            size: 3,
-            radius: 3
-        },
-        markerConfig: {
-            radius: 3,
-            size: 3
-        },
-        axis: 'left',
-        xField: 'Time',
-        yField: 'land1216'
-    },
-    {
-        type: 'line',
-        highlight: {
-            size: 3,
-            radius: 3
-        },
-        markerConfig: {
-            radius: 3,
-            size: 3
-        },
-        axis: 'left',
-        xField: 'Time',
-        yField: 'land1321'
-    },
-]
-});
 
-// Model for data fig3.json
-Ext.define('barDetails', {
-    extend: 'Ext.data.Model',
-    fields: [
-        { name: 'name', type: 'string'}, 
-        { name: 'landuse1100', type: 'int'}, 
-        { name: 'landuse1211', type: 'int'}, 
-        { name: 'landuse1212', type: 'int'}, 
-        { name: 'landuse1214', type: 'int'}, 
-        { name: 'landuse1215', type: 'int'}, 
-        { name: 'landuse1216', type: 'int'}, 
-        { name: 'landuse1220', type: 'int'}, 
-        { name: 'landuse1240', type: 'int'}, 
-        { name: 'landuse1250', type: 'int'}, 
-        { name: 'landuse1300', type: 'int'}, 
-        { name: 'landuse1310', type: 'int'}, 
-        { name: 'landuse1321', type: 'int'}, 
-        { name: 'landuse1322', type: 'int'}, 
-        { name: 'landuse1330', type: 'int'}, 
-        { name: 'landuse1340', type: 'int'}, 
-        { name: 'landuse1350', type: 'int'},
-        { name: 'landuse1360', type: 'int'},
-        { name: 'landuse1400', type: 'int'},
-        { name: 'landuse1500', type: 'int'},
-        { name: 'landuse1511', type: 'int'},
-        { name: 'landuse1512', type: 'int'},
-        { name: 'landuse1520', type: 'int'},
-        { name: 'landuse1530', type: 'int'},
-        { name: 'landuse1540', type: 'int'},
-        { name: 'landuse2000', type: 'int'},
-        { name: 'landuse3000', type: 'int'},
-        { name: 'landuse4000', type: 'int'},
-        { name: 'landuse5000', type: 'int'},
-        { name: 'landuse6000', type: 'int'},
-        { name: 'landuse9999', type: 'int'},
-        { name: 'Other', type: 'int'}
-    ]
-});
 
-// Data loaded from fig3.json
-var barStore = new Ext.data.JsonStore({
-    model: 'barDetails',
-    proxy: {
-        type: 'ajax',
-        url: '/home/data/newfig3.json',
-        reader: {
-            root: 'data',
-            type: 'json'
-        }
-    },
-    autoLoad: true,
-});
+function getDayChart(maps){
+	var arr = Object.keys(maps);
+	var series = new Array();
+	for(var i in arr){
+		series.push({
+		type: 'line',
+	        highlight: {
+	            size: 3,
+	            radius: 3
+	        },
+        	markerConfig: {
+	            radius: 3,
+	            size: 3
+	        },
+        	axis: 'left',
+	        xField: 'Day',
+        	yField: arr[i],
+		title: maps[arr[i]]
+    		});
+	}
 
-var scatterChart2 = Ext.create('Ext.chart.Chart', {
-    renderTo: Ext.getBody(),
-    width: 500,
-    height: 300,
-    animate: true,
-    store: barStore,
-    legend: {
-        position: 'right',
-        padding: 20
-    },
-    axes: [{
-        type: 'Category',
-        position: 'bottom',
-        fields: ['name'],
-        title: 'Rank',
-    }, { 
-        title: 'Number of Clusters',
-        type: 'Numeric',
-        position: 'left',
-        // Discarding 'others'
-        //fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
-        fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
-        grid: true,
-        minimum: 0
-    }],
-    series: [{
-        type: 'bar',
-        highlight: true,
-        column: true,
-        stacked: true,
-        xField: 'name',
-        //yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
-        // Discarding 'others'
-        yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
-//        yField: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999', 'Other']
-    }] 
-});
+	var chart = {
+		xtype: 'chart',
+		    width: 500,
+	    height: 300,
+	    animate: true,
+	    store: Ext.create('Ext.data.JsonStore', {
+	    fields: [arr.concat("Day")],
+	    data: [
+	    ]
+	    }),
+	    legend: {
+	        position: 'right',
+	        padding: 20
+	    },
+	    axes: [{
+	    position: 'bottom',
+	    fields: ['Day'],
+	    title: 'Day of the Week',
+	    grid: true,
+	    type: 'Category'
+	    }, { 
+	        title: 'Tweets Volume (log)',
+	    type: 'Numeric',
+	    position: 'left',
+	    fields: arr
+	    }],
+	    series: series
+	};
 
-// Boxplot
+	return chart;
+}
 
-// Component containing html
-var boxComp = new Ext.Component({
-    html: '<canvas id="boxcanvas"></canvas> ',
-  listeners: {
-        boxready: function() {
-//            document.getElementById('boxcanvas').width = this.getWidth();
-            document.getElementById('boxcanvas').width = 600;
-//            document.getElementById('boxcanvas').height = this.getHeight();
-            document.getElementById('boxcanvas').height = 270;
-            var c = document.getElementById("boxcanvas");
-            var ctx = c.getContext("2d");
-            ctx.rect(50,20,450,200);
-            ctx.stroke(); 
-        }
-    }
-});
 
-// Image file loading the boxplot image
-var boxImage = Ext.create('Ext.Img', {
-    width: 600,
-    height: 300,
-    src: '/home/data/boxplot.png',
-    renderTo: Ext.getBody()
-});
+function getHourChart(maps){
+	var arr = Object.keys(maps);
+	var series = new Array();
+	for(var i in arr){
+		series.push({
+		type: 'line',
+	        highlight: {
+	            size: 3,
+	            radius: 3
+	        },
+        	markerConfig: {
+	            radius: 3,
+	            size: 3
+	        },
+        	axis: 'left',
+	        xField: 'Hour',
+        	yField: arr[i],
+		title: maps[arr[i]]
+    		});
+	}
 
-/*
-var margin = {top: 10, right: 50, bottom: 20, left: 50},
-        width = 120 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
-var min = Infinity,
-        max = -Infinity;
-var chart = d3.box()
+	var chart = {
+		xtype: 'chart',
+		    width: 500,
+	    height: 300,
+	    animate: true,
+	    store: Ext.create('Ext.data.JsonStore', {
+	    fields: [arr.concat("Hour")],
+	    data: [
+	    ]
+	    }),
+	    legend: {
+	        position: 'right',
+	        padding: 20
+	    },
+	    axes: [{
+	    position: 'bottom',
+	    fields: ['Hour'],
+	    title: 'Hour of the Day',
+	    grid: true,
+	    type: 'Numeric'
+	    }, { 
+	        title: 'Tweets Volume (log)',
+	    type: 'Numeric',
+	    position: 'left',
+	    fields: arr
+	    }],
+	    series: series
+	};
+
+	return chart;
+}
+
+function getStackPlot(maps, category, text1, text2){
+	var arr = Object.keys(maps);
+	var values = new Array();
+	for(var i in arr) values.push(maps[arr[i]]);
+	var chart = Ext.create('Ext.chart.Chart', {
+    		width: 500,
+    		height: 300,
+    		animate: true,
+    		store: Ext.create('Ext.data.JsonStore', {
+	    		fields: arr.concat(category),
+		    	data: [
+		    	]
+		}),
+    		legend: {
+        		position: 'right',
+        		padding: 20
+    		},
+    		axes: [{
+        		type: 'Category',
+        		position: 'bottom',
+        		fields: [category],
+        		title: text1,
+    		}, { 
+        		title: text2,
+        		type: 'Numeric',
+        		position: 'left',
+        		fields: arr,
+        		grid: true,
+        		minimum: 0
+    		}],
+    		series: [{
+        		type: 'bar',
+	        	highlight: true,
+	        	column: true,
+	        	stacked: true,
+        		yField: arr,
+			title: values
+    		}] 
+	});
+
+	return chart;
+
+}
+
+function getPieChart(category, value){
+	var chart = new Ext.chart.Chart({
+	width: 500,
+        height: 300,
+        animate: true,
+        store: Ext.create('Ext.data.JsonStore', {
+                fields: [category, value],
+                data: [
+        	]
+        }),
+        shadow: true,
+        legend: {
+            position: 'right'
+        },
+        insetPadding: 25,
+        theme: 'Base:gradients',
+        series: [{
+            type: 'pie',
+            field: value,
+            showInLegend: true,
+            highlight: {
+              segment: {
+                margin: 20
+              }
+            },
+            label: {
+                field:  category,
+                display: 'rotate',
+                contrast: true,
+                font: '18px "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif'
+            },
+            animate: true
+        }]
+	});
+	
+	return chart;
+}
+
+function drawBoxPlot(panel, data, min, max, category, title, value) {
+	var labels = true; // show the text labels beside individual boxplots?
+	var margin = {top: 30, right: 50, bottom: 70, left: 50};
+	var  width = 800 - margin.left - margin.right;
+	var height = 400 - margin.top - margin.bottom;
+        var chart = d3.box()
         .whiskers(iqr(1.5))
-        .width(width)
-        .height(height);
-        d3.csv("/home/data/morley.csv", function(error, csv) {
-            if (error) throw error;
-            var data = [];
-            csv.forEach(function(x) {
-                var e = Math.floor(x.Expt - 1),
-                r = Math.floor(x.Run - 1),
-                s = Math.floor(x.Speed),
-                d = data[e];
-            if (!d) d = data[e] = [s];
-            else d.push(s);
-            if (s > max) max = s;
-            if (s < min) min = s;
-            });
-            chart.domain([min, max]);
-            var svg = d3.select("body").selectAll("svg")
-            .data(data)
-            .enter().append("svg")
-            .attr("class", "box")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.bottom + margin.top)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .call(chart);
-            setInterval(function() {
-                svg.datum(randomize).call(chart.duration(1000));
-            }, 2000);
-        });
-function randomize(d) {
-    if (!d.randomizer) d.randomizer = randomizer(d);
-    return d.map(d.randomizer);
+        .height(height) 
+        .domain([min, max])
+        .showLabels(labels);
+
+	var svg = d3.select("#"+panel.id+"-body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("class", "box")    
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        
+        var x = d3.scale.ordinal()         
+                .domain( data.map(function(d) { console.log(d); return d[0] } ) )           
+                .rangeRoundBands([0 , width], 0.7, 0.3);                
+
+        var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+        // the y-axis
+        var y = d3.scale.linear()
+        .domain([min, max])
+        .range([height + margin.top, 0 + margin.top]);
+        
+        var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+        // the x-axis
+
+        // draw the boxplots    
+        svg.selectAll(".box")      
+      .data(data)
+
+          .enter().append("g")
+                .attr("transform", function(d) { return "translate(" +  x(d[0])  + "," + margin.top + ")"; } )
+      .call(chart.width(x.rangeBand())); 
+        
+              
+        // add a title
+        svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 + (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "18px") 
+        //.style("text-decoration", "underline")  
+        .text(title);
+ 
+         // draw y axis
+        svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+                .append("text") // and text1
+                  .attr("transform", "rotate(-90)")
+                  .attr("y", 6)
+                  .attr("dy", ".71em")
+                  .style("text-anchor", "end")
+                  .style("font-size", "16px") 
+                  .text(value);                
+        
+        // draw x axis  
+        svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + (height  + margin.top + 10) + ")")
+      .call(xAxis)
+          .append("text")             // text label for the x axis
+        .attr("x", (width / 2) )
+        .attr("y",  10 )
+                .attr("dy", ".71em")
+        .style("text-anchor", "middle")
+                .style("font-size", "16px") 
+        .text(category);
 }
-function randomizer(d) {
-    var k = d3.max(d) * .02;
-    return function(d) {
-        return Math.max(min, Math.min(max, d + k * (Math.random() - .5)));
-    };
-}
+        // distance between graphs
+
 function iqr(k) {
     return function(d, i) {
-        var q1 = d.quartiles[0],
-            q3 = d.quartiles[2],
+        var q1 = d[1],
+            q3 = d[3],
             iqr = (q3 - q1) * k,
             i = -1,
             j = d.length;
@@ -471,56 +476,157 @@ function iqr(k) {
         return [i, j];
     };
 }
-*/
 
 
-var scatterChart3 = Ext.create('Ext.chart.Chart', {
-    renderTo: Ext.getBody(),
-    width: 500,
-    height: 300,
-    animate: true,
-    store: barStore,
-    legend: {
-        position: 'right',
-        padding: 20
-    },
-    axes: [{
-        type: 'Category',
-        position: 'bottom',
-        fields: ['name'],
-        title: 'Rank',
-    }, { 
-        title: 'Number of Clusters',
-        type: 'Numeric',
-        position: 'left',
-        // Discarding 'others'
-        //fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
-        fields: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
-        grid: true,
-        minimum: 0
-    }],
-    series: [{
-        type: 'bar',
-        highlight: true,
-        column: true,
-        stacked: true,
-        xField: 'name',
-        //yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250', 'Other'],
-        // Discarding 'others'
-        yField: ['landuse1100', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1250'],
-//        yField: ['landuse1100', 'landuse1211', 'landuse1212', 'landuse1214', 'landuse1215', 'landuse1216', 'landuse1220', 'landuse1240', 'landuse1250', 'landuse1300', 'landuse1310', 'landuse1321', 'landuse1322', 'landuse1330', 'landuse1340', 'landuse1350', 'landuse1360', 'landuse1400', 'landuse1500', 'landuse1511', 'landuse1512', 'landuse1520', 'landuse1530', 'landuse1540', 'landuse2000', 'landuse3000', 'landuse4000', 'landuse5000', 'landuse6000', 'landuse9999', 'Other']
-    }] 
-});
+function chordRdr (matrix, mmap) {
+  return function (d) {
+    var i,j,s,t,g,m = {};
+    if (d.source) {
+      i = d.source.index; j = d.target.index;
+      s = _.where(mmap, {id: i });
+      t = _.where(mmap, {id: j });
+      m.sname = s[0].name;
+      m.sdata = d.source.value;
+      m.svalue = +d.source.value;
+      m.stotal = _.reduce(matrix[i], function (k, n) { return k + n }, 0);
+      m.tname = t[0].name;
+      m.tdata = d.target.value;
+      m.tvalue = +d.target.value;
+      m.ttotal = _.reduce(matrix[j], function (k, n) { return k + n }, 0);
+    } else {
+      g = _.where(mmap, {id: d.index });
+      m.gname = g[0].name;
+      m.gdata = g[0].data;
+      m.gvalue = d.value;
+    }
+    m.mtotal = _.reduce(matrix, function (m1, n1) { 
+      return m1 + _.reduce(n1, function (m2, n2) { return m2 + n2}, 0);
+    }, 0);
+    return m;
+  }
+}
 
 
-//Floating window for displaying the graphs
-var floatwind = new Ext.create('Ext.tab.Panel', {
-    title: 'Models display',
+function drawChoordPlot(panel, matrix, map, title) {
+        var w = panel.width - 50, h = panel.height - 50, r1 = h / 2, r0 = r1 - 200;
+	
+        var fill = d3.scale.ordinal()
+            .domain(d3.range(4))
+            .range(["#000000", "#FFDD89", "#957244", "#F26223"]);
+
+        var chord = d3.layout.chord()
+            .padding(.02)
+            .sortSubgroups(d3.descending)
+            .sortChords(d3.descending);
+
+        var arc = d3.svg.arc()
+            .innerRadius(r0)
+            .outerRadius(r0 + 20);
+
+        var svg = d3.select('#' + panel.id + '-body').append("svg:svg")
+            .attr("width", w)
+            .attr("height", h)
+          .append("svg:g")
+            .attr("id", "circle")
+            .attr("transform", "translate(" + w / 2 + "," + (h / 2) + ")");
+
+            svg.append("circle")
+                .attr("r", r0 + 20);
+
+        var rdr = chordRdr(matrix, map);
+        chord.matrix(matrix);
+
+        svg.append("text")
+        .attr("x", 0)             
+        .attr("y", w/2 - 125)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "18px") 
+        //.style("text-decoration", "underline")  
+        .text(title);
+
+        var g = svg.selectAll("g.group")
+            .data(chord.groups())
+          .enter().append("svg:g")
+            .attr("class", "group")
+            .on("mouseover", mouseover)
+            .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
+
+        g.append("svg:path")
+            .style("stroke", "black")
+            .style("fill", function(d) { return fill(d.index); })
+            .attr("d", arc);
+
+        g.append("svg:text")
+            .each(function(d) { d.angle = (d.startAngle + d.endAngle) / 2; })
+            .attr("dy", ".35em")
+            .style("font-family", "helvetica, arial, sans-serif")
+            .style("font-size", "10px")
+            .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+            .attr("transform", function(d) {
+              return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+                  + "translate(" + (r0 + 26) + ")"
+                  + (d.angle > Math.PI ? "rotate(180)" : "");
+            })
+            .text(function(d) { return rdr(d).gname; });
+
+        var chordPaths = svg.selectAll("path.chord")
+        .data(chord.chords())
+        .enter().append("svg:path")
+        .attr("class", "chord")
+        .style("stroke", function(d) { return d3.rgb(fill(d.target.index)).darker(); })
+        .style("fill", function(d) { return fill(d.target.index); })
+        .attr("d", d3.svg.chord().radius(r0))
+        .on("mouseover", function (d) {
+         d3.select("#tooltip")
+        .style("visibility", "visible")
+        .html(chordTip(rdr(d)))
+        .style("top", function () { return (d3.event.pageY - 100)+"px"})
+        .style("left", function () { return (d3.event.pageX - 100)+"px";})
+        })
+        .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
+
+	function chordTip (d) {
+	        var p = d3.format(".2%"), q = d3.format(",.3r")
+	        return "Chord Info:<br/>"
+	        + p(d.svalue/d.stotal) + " (" + q(d.svalue) + ") moves from "
+	        + d.sname + " to " + d.tname
+	        + (d.sname === d.tname ? "": ("<br/>while...<br/>"
+	        + p(d.tvalue/d.ttotal) + " (" + q(d.tvalue) + ") moves from "
+        	+ d.tname + " to " + d.sname))
+	}
+
+	function groupTip (d) {
+        	var p = d3.format(".1%"), q = d3.format(",.3r")
+	        return "Group Info:<br/>"
+	        + d.gname + " : " + q(d.gvalue) + "<br/>"
+	        + p(d.gvalue/d.mtotal) + " of Matrix Total (" + q(d.mtotal) + ")"
+	}
+
+	function mouseover(d, i) {
+	        d3.select("#tooltip")
+	        .style("visibility", "visible")
+	        .html(groupTip(rdr(d)))
+	        .style("top", function () { return (d3.event.pageY - 80)+"px"})
+	        .style("left", function () { return (d3.event.pageX - 130)+"px";})
+	        chordPaths.classed("fade", function(p) {
+	                return p.source.index != i
+        	        && p.target.index != i;
+        	});
+	}
+}
+	
+var floatwind = getNewFloatWind();
+
+function getNewFloatWind(){
+return new Ext.create('Ext.tab.Panel', {
+    //header:false,
     width: 700,
     height: 630,
     floating: true,
     closable: true,
     draggable: true,
+    renderTo: Ext.getBody(),
+    hidden:true,
     items: 
     [ {
         title: 'Rank',
@@ -528,9 +634,9 @@ var floatwind = new Ext.create('Ext.tab.Panel', {
         autoScroll: true,
         layout: {type: 'vbox', align: 'center'},
         items:  [
-        scatterChart,
-        scatterChart2,
-        boxImage
+		getDayChart(ranks),
+		getHourChart(ranks),
+		getStackPlot(landuses, 'rank', 'Rank', 'Number of Clusters'),
         ]
     },{
         title: 'Landuse',
@@ -538,19 +644,79 @@ var floatwind = new Ext.create('Ext.tab.Panel', {
         autoScroll: true,
         layout: {type: 'vbox', align: 'center'},
         items:  [
-            scatterChart3
+		getDayChart(landuses),
+		getHourChart(landuses),
         ]
     }
+    ]
+});
+}
+
+var floatwind2 = getNewFloatWind2();
+
+function getNewFloatWind2(){
+return new Ext.create('Ext.tab.Panel', {
+    //header:false,
+    closable: true,
+    width: 700,
+    height: 630,
+    floating: true,
+    hidden:true,
+    draggable: true,
+    items: 
+    [ {
+        xtype: 'panel',
+        autoScroll: true,
+	title: 'Rank',
+        layout: {type: 'vbox', align: 'center'},
+        items:  [
+		getDayChart(ranks),
+		getHourChart(ranks),
+		getStackPlot(landuses, 'rank', 'Rank', 'Number of Clusters'),
+        ]
+    },{
+        title: 'Landuse',
+        xtype: 'panel',
+        autoScroll: true,
+        layout: {type: 'vbox', align: 'center'},
+        items:  [
+		getDayChart(landuses),
+		getHourChart(landuses),
+        ]
+    },{
+        title: 'Users',
+        xtype: 'panel',
+        autoScroll: true,
+        layout: {type: 'vbox', align: 'center'},
+        items:  [
+		getPieChart("lang", "count"),
+        ]
+    }
+
 ]
 });
+}
+
+var choordPanel = getNewPanel();
+
+function getNewPanel(){
+return  new Ext.create('Ext.tab.Panel', {
+    //header:false,
+    closable: true,
+    width: 700,
+    height: 630,
+    floating: true,
+    hidden:true,
+    draggable: true,
+});
+}
+ 
 
 // Sample spatial clustering algorithm store for the grid panel
 var visitorStore = Ext.create('Ext.data.Store',{
     fields:['Id','Name'],
     data:[
-{Id:'db',Name:'DBSCAN'},
-{Id:'seq',Name:'SeqScan'},
-{Id:'gm',Name:'Gaussian Mixture'}
+{Id:'db',Name:'DBSCAN'}
 ]
 });
 
@@ -564,14 +730,6 @@ var visitorGrid = Ext.create('Ext.grid.Panel', {
 height: 160,
 width: 102,
 renderTo: Ext.getBody(),
-listeners: {
-    cellclick: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts){
-        if(rowIndex===0){
-                    Ext.getCmp('visitortab').setActiveTab('paramtab');
-                        floatwind.show();
-                }
-            }
-        }
 });
 
 // Fieldset component where users can choose the parameters
@@ -606,9 +764,7 @@ var visitorParam =
 var aggregationStore = Ext.create('Ext.data.Store',{
                 fields:['Id','Name'],
                 data:[
-                {Id:'ct',Name:'Census Tract'},
-                {Id:'cb',Name:'Census Blocks'},
-                {Id:'zc',Name:'Zip Codes'}
+                {Id:'ct',Name:'Census Tract'}
                 ]
 });
 
@@ -637,34 +793,6 @@ var aggregationForm = Ext.create('Ext.form.Panel', {
     }]
 });
 
-//----------------------------------------------------
-var langStore = Ext.create('Ext.data.Store',{
-                fields:['Id','Name'],
-                data:[
-                {Id:'eng',Name:'English'},
-                {Id:'esp',Name:'Spanish'},
-                {Id:'fre',Name:'French'},
-                {Id:'chi',Name:'Chinese'}
-                ]
-});
-
-var landStore = Ext.create('Ext.data.Store',{
-                    fields: ['Id', 'Label'],
-                    data:[
-                    {Id: 'l1', Label:'Land1'},
-                    {Id: 'l2', Label:'Land2'},
-                    {Id: 'l3', Label:'Land3'}
-                    ]
-});
-
-var rankStore = Ext.create('Ext.data.Store',{
-                    fields: ['Id', 'Label'],
-                    data:[
-                    {Id: 'r1', Label:'Rank1'},
-                    {Id: 'r2', Label:'Rank2'},
-                    {Id: 'r3', Label:'Rank3'}
-                    ]
-});
 
 var aggregationOptions=  
 	{
@@ -675,128 +803,74 @@ var aggregationOptions=
 		hideMode: 'visibility',
 		items : [
 			{
-					xtype: 'label',
-					name: 'landuse1title',
-					text: 'Original'
+				xtype: 'label',
+				name: 'landuse1title',
+				text: 'Origin'
 			},
 			{
-					xtype: 'combobox',
-					name: 'landuse1value',
-                    store: landStore,
-                    displayField: 'Label',
-                    valueField: 'Id',
-                    queryMode: 'local',
-                    editable: false,
-                    forceSelection: true
+				xtype: 'combo',
+				name: 'landuse1value',
+                    		store: getValues(landuses),
+				displayField: 'value',
+				valueField: 'id',
+                    		queryMode: 'local',
+                    		editable: false,
+                    		forceSelection: true,
+				fieldLabel: 'Landuse',
+				value: 'null',
 			},
 			{
-					xtype: 'label',
-					name: 'landuse2title',
-					text: 'Destination'
+				xtype: 'combobox',
+				name: 'rank1value',
+		       	        store: getValues(ranks),
+				displayField: 'value',
+				valueField: 'id',
+		                fieldLabel: 'Rank',
+		                queryMode: 'local',
+		                editable: false,
+		                forceSelection: true,
+				value: 'null'
+			},
+			{
+				xtype: 'label',
+				name: 'landuse2title',
+				text: 'Destination'
 			},	
 			{
-					xtype: 'combo',
-					name: 'landuse2value',
-                    store: landStore,
-                    displayField: 'Label',
-                    valueField: 'Id',
-                    queryMode: 'local',
-                    editable: false,
-                    forceSelection: true
+				xtype: 'combobox',
+				name: 'landuse2value',
+                    		store: getValues(landuses),
+				displayField: 'value',
+				valueField: 'id',
+				fieldLabel: 'Landuse',
+                    		queryMode: 'local',
+                    		editable: false,
+                    		forceSelection: true,
+				value: 'null'
 			},
 			{
-					xtype: 'label',
-					name: 'rank1title',
-					text: 'Rank 1'
+				xtype: 'combobox',
+				name: 'rank2value',
+                    		store: getValues(ranks),
+				displayField: 'value',
+				valueField: 'id',
+                    		fieldLabel: 'Rank',
+                    		queryMode: 'local',
+                    		editable: false,
+                    		forceSelection: true,
+				value: 'null'
 			},
 			{
-					xtype: 'combobox',
-					name: 'rank1value',
-                    store: rankStore,
-                    displayField: 'Label',
-                    valueField: 'Id',
-                    queryMode: 'local',
-                    editable: false,
-                    forceSelection: true
-			},
-			{
-					xtype: 'label',
-					name: 'rank2title',
-					text: 'Rank 2'
-			},	
-			{
-					xtype: 'combo',
-					name: 'rank2value',
-                    store: rankStore,
-                    displayField: 'Label',
-                    valueField: 'Id',
-                    queryMode: 'local',
-                    editable: false,
-                    forceSelection: true
-			},
-			{
-					xtype: 'checkboxfield',
-                    fieldLabel: 'Show Statistics Plot',
-                    items: [
-                    {
-                        name: 'query',
-                        inputValue: '1',
-                        id: 'checkbox1'
-                    }
-                    ]
-			},
-			{
-					xtype: 'checkboxfield',
-                    fieldLabel: 'Show Spread',
-                    items: [
-                    {
-                        name: 'query',
-                        inputValue: '1',
-                        id: 'checkbox2'
-                    }
-                    ]
-			}
-            /*
-        		{
-            /*
-        		{
-	        		xtype: 'combobox',
-                    margin: '10 10 0 0',
-                    fieldLabel: 'Dominant Lang',
-                    store: langStore,
-                    displayField: 'Name',
-                    valueField: 'Id',
-                    queryMode: 'local',
-                    editable: false,
-                    forceSelection: true,
-                    value: '201407'
-                },
-			{
-					xtype : 'label',
-                    margin: '20 10 0 0',
-					name : 'ufsliderlabeltitle',
-					text : 'Minimum Percentage'
-			},
-			{
-					xtype : 'slider',
-                    name : 'ufslider',
-                    width : 250,
-                    useTips : true,
-                    margin : '10 0 0 5',
-                    maxValue : 100,
-                    value : 20
-			},
-			{
-					xtype : 'button',
-					width : 150,
-					margin : '10 0 0 0',
-					text : 'Display',
-			}
-            */
+                        	xtype : 'button',
+                                width : 150,
+                                margin : '10 0 0 0',
+                                text : 'Update Map',
+                        }
 		]
 }
 
 // Results Panel (id: results_panel)
+
 Ext.define('CG.view.ResultPanel', {
 		extend: 'Ext.panel.Panel',
 		xtype: 'cgx4_urbanflowpanel',
@@ -832,3 +906,4 @@ Ext.define('CG.view.ResultPanel', {
             }
         ]
 });
+
